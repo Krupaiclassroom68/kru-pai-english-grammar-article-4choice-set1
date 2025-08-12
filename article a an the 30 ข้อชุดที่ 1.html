@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Master – Kru Pai Classroom</title>
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #333;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #d32f2f;
+            margin-top: 20px;
+        }
+        .kru-logo {
+            font-size: 1.2em;
+            color: #d32f2f;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .container {
+            margin: 30px auto;
+            max-width: 600px;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px #d32f2f;
+        }
+        .question {
+            font-size: 1.5em;
+            margin: 20px 0;
+            color: #000;
+        }
+        .option {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            width: 200px;
+            background-color: #e0e0e0;
+            color: #000;
+            border: 2px solid #d32f2f;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .option:hover {
+            background-color: #d32f2f;
+            color: #fff;
+        }
+        .score {
+            font-size: 1.3em;
+            margin-top: 20px;
+        }
+        .start-btn, .restart-btn {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background-color: #d32f2f;
+            color: #fff;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .start-btn:hover, .restart-btn:hover {
+            background-color: #b71c1c;
+        }
+    </style>
+</head>
+<body>
+    <h1>Article Master</h1>
+    <div class="kru-logo">Kru Pai Classroom</div>
+    <div class="container" id="game-container">
+        <div id="start-screen">
+            <p>ใส่ชื่อเล่นของคุณ:</p>
+            <input type="text" id="player-name" placeholder="ชื่อเล่น">
+            <br>
+            <button class="start-btn" onclick="startGame()">Start Game</button>
+        </div>
+        <div id="quiz-screen" style="display:none;">
+            <div class="kru-logo">Kru Pai Classroom</div>
+            <div id="question-number"></div>
+            <div class="question" id="question-text"></div>
+            <button class="option" onclick="checkAnswer('a')">a</button>
+            <button class="option" onclick="checkAnswer('an')">an</button>
+            <button class="option" onclick="checkAnswer('the')">the</button>
+            <button class="option" onclick="checkAnswer('-')">–</button>
+        </div>
+        <div id="result-screen" style="display:none;">
+            <h2 id="result-text"></h2>
+            <div id="answer-key"></div>
+            <button class="restart-btn" onclick="restartGame()">เล่นใหม่</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {q: "___ apple is on the table.", a: "an"},
+            {q: "___ water is important for life.", a: "-"},
+            {q: "___ sun rises in the east.", a: "the"},
+            {q: "I saw ___ elephant in the zoo.", a: "an"},
+            {q: "He bought ___ car yesterday.", a: "a"},
+            {q: "___ Mount Everest is the highest mountain.", a: "the"},
+            {q: "She doesn’t like ___ milk.", a: "-"},
+            {q: "There is ___ university near my house.", a: "a"},
+            {q: "Have you seen ___ moon tonight?", a: "the"},
+            {q: "Can you give me ___ orange?", a: "an"},
+            {q: "He doesn’t eat ___ rice in the morning.", a: "-"},
+            {q: "___ Eiffel Tower is in Paris.", a: "the"},
+            {q: "She has ___ idea about this.", a: "an"},
+            {q: "They visited ___ museum last week.", a: "a"},
+            {q: "I love ___ music.", a: "-"},
+            {q: "___ Nile is the longest river.", a: "the"},
+            {q: "We saw ___ owl on the tree.", a: "an"},
+            {q: "He is ___ honest man.", a: "an"},
+            {q: "Please close ___ window.", a: "the"},
+            {q: "She bought ___ umbrella for the trip.", a: "an"},
+            {q: "___ dogs are very friendly animals.", a: "-"},
+            {q: "Have you been to ___ hospital nearby?", a: "the"},
+            {q: "He is waiting for ___ bus to arrive.", a: "the"},
+            {q: "I want ___ apple pie, please.", a: "an"},
+            {q: "___ Earth moves around the sun.", a: "the"},
+            {q: "She bought ___ hat from the market.", a: "a"},
+            {q: "I like to drink ___ tea before bed.", a: "-"},
+            {q: "Let’s visit ___ British Museum this weekend.", a: "the"},
+            {q: "He has ___ hour to finish his homework.", a: "an"},
+            {q: "There is ___ park near our house.", a: "a"},
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let playerName = "";
+
+        function startGame() {
+            playerName = document.getElementById("player-name").value;
+            if (playerName.trim() === "") {
+                alert("กรุณาใส่ชื่อเล่นก่อนเริ่มเกม!");
+                return;
+            }
+            document.getElementById("start-screen").style.display = "none";
+            document.getElementById("quiz-screen").style.display = "block";
+            showQuestion();
+        }
+
+        function showQuestion() {
+            document.getElementById("question-number").innerText = "ข้อที่ " + (currentQuestion + 1) + " / " + questions.length;
+            document.getElementById("question-text").innerText = questions[currentQuestion].q;
+        }
+
+        function checkAnswer(selected) {
+            if (selected === questions[currentQuestion].a) {
+                score++;
+            }
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById("quiz-screen").style.display = "none";
+            document.getElementById("result-screen").style.display = "block";
+            document.getElementById("result-text").innerText = playerName + " คุณทำได้ " + score + " / " + questions.length + " คะแนน";
+            let keyHTML = "<h3>เฉลยรวม:</h3><ol>";
+            questions.forEach((q, index) => {
+                keyHTML += "<li>" + q.q.replace("___", "<b>" + q.a + "</b>") + "</li>";
+            });
+            keyHTML += "</ol>";
+            document.getElementById("answer-key").innerHTML = keyHTML;
+        }
+
+        function restartGame() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById("result-screen").style.display = "none";
+            document.getElementById("start-screen").style.display = "block";
+        }
+    </script>
+</body>
+</html>
